@@ -136,19 +136,20 @@ body{font-family:'Instrument Sans',sans-serif;background:var(--paper);color:var(
 .chip.on,.chip:hover{border-color:var(--gold);color:var(--gold);background:var(--gold-pale);}
 .srch{margin-left:auto;background:var(--card);border:1px solid var(--line);color:var(--ink);padding:6px 14px;border-radius:20px;font-size:13px;outline:none;width:180px;transition:border-color .15s;font-family:'Instrument Sans',sans-serif;}
 .srch:focus{border-color:var(--gold);}
-.exp-list{display:flex;flex-direction:column;gap:4px;}
-.exp-card{display:grid;grid-template-columns:44px 1fr auto;align-items:center;gap:14px;padding:14px 16px;background:var(--card);border-radius:var(--r);border:1px solid transparent;transition:all .15s;box-shadow:var(--shadow-sm);}
-.exp-card:hover{border-color:var(--line);box-shadow:var(--shadow);transform:translateY(-1px);}
-.exp-ico{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
-.exp-body{min-width:0;}
-.exp-desc{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.exp-meta{display:flex;align-items:center;gap:6px;margin-top:3px;flex-wrap:wrap;}
-.exp-cat-lbl{font-size:11px;color:var(--muted);}
-.by-badge{font-size:10px;font-weight:600;padding:2px 7px;border-radius:10px;background:var(--paper);color:var(--muted);}
-.exp-right{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0;}
-.exp-amount{font-family:'DM Mono',monospace;font-size:15px;font-weight:500;color:var(--red);white-space:nowrap;}
-.exp-date{font-size:11px;color:var(--dim);font-family:'DM Mono',monospace;}
-.exp-del{background:none;border:none;color:var(--dim);cursor:pointer;padding:4px;border-radius:6px;font-size:13px;opacity:0;transition:all .12s;line-height:1;}
+.exp-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;}
+.exp-card{display:flex;flex-direction:column;gap:6px;padding:10px 12px;background:var(--card);border-radius:var(--r-sm);border:1px solid var(--line);transition:all .15s;box-shadow:var(--shadow-sm);position:relative;}
+.exp-card:hover{border-color:var(--gold);box-shadow:var(--shadow);transform:translateY(-1px);}
+.exp-card-top{display:flex;align-items:center;gap:8px;}
+.exp-ico{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.exp-desc{font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0;}
+.exp-card-bottom{display:flex;align-items:center;justify-content:space-between;gap:4px;}
+.exp-meta{display:flex;align-items:center;gap:4px;}
+.exp-cat-lbl{font-size:10px;color:var(--muted);}
+.by-badge{font-size:9px;font-weight:600;padding:1px 5px;border-radius:8px;background:var(--paper);color:var(--muted);border:1px solid var(--line);}
+.exp-right{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+.exp-amount{font-family:'DM Mono',monospace;font-size:12px;font-weight:600;color:var(--red);white-space:nowrap;}
+.exp-date{font-size:10px;color:var(--dim);font-family:'DM Mono',monospace;}
+.exp-del{background:none;border:none;color:var(--dim);cursor:pointer;padding:2px 4px;border-radius:4px;font-size:11px;opacity:0;transition:all .12s;line-height:1;position:absolute;top:6px;right:6px;}
 .exp-card:hover .exp-del{opacity:1;}
 .exp-del:hover{color:var(--red);background:var(--red-soft);}
 .empty{text-align:center;padding:64px 20px;color:var(--muted);}
@@ -625,15 +626,14 @@ function renderExpenses() {
     const ds = new Date(e.date+'T00:00:00').toLocaleDateString('en-IE', {day:'numeric', month:'short'});
     const own = e.addedBy === userName;
     return `<div class="exp-card">
-      <div class="exp-ico" style="background:${cat.color}18">${cat.icon}</div>
-      <div class="exp-body">
+      ${own ? `<button class="exp-del" onclick="deleteExp('${e.id}')" title="Delete">✕</button>` : ''}
+      <div class="exp-card-top">
+        <div class="exp-ico" style="background:${cat.color}22">${cat.icon}</div>
         <div class="exp-desc">${esc(e.description)}</div>
-        <div class="exp-meta"><span class="exp-cat-lbl">${cat.name}</span><span class="by-badge">${esc(e.addedBy)}</span></div>
       </div>
-      <div class="exp-right">
-        <div class="exp-amount">−${fmt(e.amount)}</div>
-        <div class="exp-date">${ds}</div>
-        ${own ? `<button class="exp-del" onclick="deleteExp('${e.id}')">✕</button>` : ''}
+      <div class="exp-card-bottom">
+        <div class="exp-meta"><span class="exp-cat-lbl">${cat.name}</span><span class="by-badge">${esc(e.addedBy)}</span></div>
+        <div class="exp-right"><span class="exp-date">${ds}</span><span class="exp-amount">−${fmt(e.amount)}</span></div>
       </div>
     </div>`;
   }).join('');
